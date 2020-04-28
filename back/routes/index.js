@@ -15,7 +15,7 @@ router.get('/movies', function (req, res, next) {
           return new Promise(resolve => {
             const idMovie = movie.id;
             let trailerYoutubeKey = '';
-            urlApiMovies = `http://api.themoviedb.org/3/movie/${idMovie}/videos?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`;
+            urlApiMovies = `https://api.themoviedb.org/3/movie/${idMovie}/videos?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`;
             request(urlApiMovies, function (error, response, body) {
               if (!error && response.statusCode == 200) {
                 body = JSON.parse(body);
