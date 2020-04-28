@@ -29,20 +29,22 @@ const MovieProvider = ({ children }) => {
   const [urlTrailer, setUrlTrailer] = useState('');
 
   useEffect(() => {
-    setTotalMovies(movies.length);
+    if (movies) setTotalMovies(movies.length);
   }, [movies]);
 
   useEffect(() => {
-    setMovies(
-      movies.map(movie =>
-        likedMovies
-          .reduce((acc, val) => [...acc, val.id], [])
-          .includes(movie.id)
-          ? { ...movie, isLiked: true }
-          : { ...movie, isLiked: false }
-      )
-    );
-    setTotalLikedMovies(likedMovies.length);
+    if (movies) {
+      setMovies(
+        movies.map(movie =>
+          likedMovies
+            .reduce((acc, val) => [...acc, val.id], [])
+            .includes(movie.id)
+            ? { ...movie, isLiked: true }
+            : { ...movie, isLiked: false }
+        )
+      );
+      setTotalLikedMovies(likedMovies.length);
+    }
   }, [likedMovies]);
 
   const initMovies = sourceMovies => {
