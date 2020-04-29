@@ -29,7 +29,10 @@ const MovieProvider = ({ children }) => {
   const [urlTrailer, setUrlTrailer] = useState('');
 
   useEffect(() => {
-    if (movies) setTotalMovies(movies.length);
+    if (movies) {
+      setTotalMovies(movies.length);
+      setTotalLikedMovies(movies.filter(movie => movie.isLiked).length);
+    }
   }, [movies]);
 
   useEffect(() => {
@@ -43,7 +46,6 @@ const MovieProvider = ({ children }) => {
             : { ...movie, isLiked: false }
         )
       );
-      setTotalLikedMovies(likedMovies.length);
     }
   }, [likedMovies]);
 
@@ -52,9 +54,7 @@ const MovieProvider = ({ children }) => {
   };
 
   const initLikedMovies = sourceLikedMovies =>
-    setLikedMovies(
-      sourceLikedMovies.map(movie => ({ ...movie, isLiked: true }))
-    );
+    setLikedMovies(sourceLikedMovies);
 
   const addLikedMovie = movieToAdd => {
     const existingMovie = likedMovies.find(movie => movie.id === movieToAdd.id);

@@ -8,7 +8,7 @@ import { Row, Container } from 'reactstrap';
 const MainScreen = () => {
   const {
     movies,
-    likedMovies,
+    totalLikedMovies,
     isPlayingTrailer,
     urlTrailer,
     initMovies,
@@ -55,7 +55,7 @@ const MainScreen = () => {
       </div>
       <Container style={{ marginBottom: '2.5rem' }}>
         <Row>
-          {isViewLikedMovies && likedMovies.length === 0 ? (
+          {isViewLikedMovies && totalLikedMovies === 0 ? (
             <div
               style={{ height: '70vh', width: '100vw' }}
               className="row align-items-center justify-content-center"
