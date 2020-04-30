@@ -12,9 +12,7 @@ import {
 const MyNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { setViewLikedMovies, totalMovies, totalLikedMovies } = useContext(
-    MovieContext
-  );
+  const { setViewLikedMovies, totalLikedMovies } = useContext(MovieContext);
 
   return (
     <div style={{ marginBottom: '7rem' }}>
@@ -42,7 +40,7 @@ const MyNavbar = () => {
                 }}
                 className="text-warning"
               >
-                {`Top ${totalMovies} Films Populaires`}
+                {`Top Films Populaires`}
               </NavLink>
             </NavItem>
             <NavItem>

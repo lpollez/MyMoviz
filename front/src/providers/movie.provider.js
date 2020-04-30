@@ -50,7 +50,7 @@ const MovieProvider = ({ children }) => {
   }, [likedMovies]);
 
   const initMovies = sourceMovies => {
-    setMovies(sourceMovies);
+    setMovies(sourceMovies.filter(movie => movie.overview || movie.youtube));
   };
 
   const initLikedMovies = sourceLikedMovies =>
