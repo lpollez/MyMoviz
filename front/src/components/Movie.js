@@ -15,7 +15,7 @@ const Movie = ({ movie }) => {
       try {
         addLikedMovie(movie);
         const response = await fetch(
-          'https://my-moviz-backend.herokuapp.com/mymovies',
+          'https://my-moviz-backend.netlify.app/.netlify/functions/server/mymovies',
           {
             method: 'POST',
             headers: {
@@ -35,7 +35,7 @@ const Movie = ({ movie }) => {
       try {
         removeLikedMovie(movie);
         const response = await fetch(
-          `https://my-moviz-backend.herokuapp.com/mymovies/${id}`,
+          `https://my-moviz-backend.netlify.app/.netlify/functions/server/mymovies/${id}`,
           {
             method: 'DELETE',
           }

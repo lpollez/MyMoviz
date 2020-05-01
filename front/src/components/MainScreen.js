@@ -23,12 +23,12 @@ const MainScreen = () => {
       setIsLoadingData(true);
       try {
         let response = await fetch(
-          'https://my-moviz-backend.herokuapp.com/movies'
+          'https://my-moviz-backend.netlify.app/.netlify/functions/server/movies'
         );
         let data = await response.json();
         initMovies(data.movies);
         response = await fetch(
-          'https://my-moviz-backend.herokuapp.com/mymovies'
+          'https://my-moviz-backend.netlify.app/.netlify/functions/server/mymovies'
         );
         data = await response.json();
         initLikedMovies(data.movies);
