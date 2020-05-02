@@ -1,13 +1,16 @@
 require('dotenv').config();
-var express = require('express');
-var request = require('request');
-var movieModel = require('../models/movies');
-var router = express.Router();
 
-// get movies from themoviedb with first Youtube trailer
-router.get('/movies', function (req, res, next) {
+const express = require('express');
+const request = require('request');
+const Joi = require('joi');
+const movieModel = require('../models/movies');
+
+const router = express.Router();
+
+// get movies from themoviedb with first Youtube trailer FR found
+router.get('/movies', (req, res) => {
   let urlApiMovies = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&language=fr-FR&sort_by=popularity.desc&include_adult=false&video=false&page=1`;
-  request(urlApiMovies, function (error, response, body) {
+  request(urlApiMovies, (error, response, body) => {
     if (!error && response.statusCode == 200) {
       body = JSON.parse(body);
       if (body.results) {
@@ -16,7 +19,7 @@ router.get('/movies', function (req, res, next) {
             const idMovie = movie.id;
             let trailerYoutubeKey = '';
             urlApiMovies = `https://api.themoviedb.org/3/movie/${idMovie}/videos?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`;
-            request(urlApiMovies, function (error, response, body) {
+            request(urlApiMovies, (error, response, body) => {
               if (!error && response.statusCode == 200) {
                 body = JSON.parse(body);
                 const trailer =
@@ -46,48 +49,60 @@ router.get('/movies', function (req, res, next) {
         res.json({ result: true, movies: [] });
       }
     } else {
-      res.json({ result: false, error });
+      res.status(response.statusCode).json({ result: false, error });
     }
   });
 });
 
 // get liked movies
-router.get('/mymovies', function (req, res, next) {
-  movieModel.find(function (error, data) {
-    if (!error) {
-      res.json({ result: true, movies: data });
-    } else {
-      res.json({ result: false, error });
-    }
+router.get('/mymovies', (req, res) => {
+  movieModel.find((error, data) => {
+    error
+      ? res.status(400).json({ result: false, error })
+      : res.json({ result: true, movies: data });
   });
 });
 
 // add liked movie
-router.post('/mymovies', function (req, res, next) {
+router.post('/mymovies', (req, res) => {
+  const { error } = validateMovie(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
   var newMovie = new movieModel({
     id: req.body.id,
     title: req.body.title,
     overview: req.body.overview,
     poster_path: req.body.poster_path,
   });
-  newMovie.save(function (error, movie) {
-    if (!error) {
-      res.json({ result: true, movie });
-    } else {
-      res.json({ result: false, error });
-    }
+
+  newMovie.save((error, movie) => {
+    error
+      ? res.status(400).json({ result: false, error })
+      : res.json({ result: true, movie });
   });
 });
 
 // delete liked movie
-router.delete('/mymovies/:id', function (req, res, next) {
-  movieModel.deleteOne({ id: req.params.id }, function (error, response) {
-    if (!error) {
-      res.json({ result: true });
-    } else {
-      res.json({ result: false, error });
-    }
+router.delete('/mymovies/:id', (req, res) => {
+  movieModel.deleteOne({ id: req.params.id }, (error, response) => {
+    error
+      ? res.status(400).json({ result: false, error })
+      : response.deletedCount === 0
+      ? res.status(404).json({ result: false })
+      : res.json({ result: true });
   });
 });
+
+const validateMovie = movie => {
+  const schema = {
+    id: Joi.number().integer().min(1).required(),
+    title: Joi.string().min(1).required(),
+    overview: Joi.string().min(0).allow('').allow(null).required(),
+    poster_path: Joi.string().min(1).required(),
+  };
+  return Joi.validate(movie, schema);
+};
 
 module.exports = router;
